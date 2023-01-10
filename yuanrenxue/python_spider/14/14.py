@@ -63,6 +63,7 @@ def total_number(page):
         page_num += int(num)
         print(f'num :{num}')
     return page_num
+
 if __name__ == '__main__':
     all_num = 0
     for i in range(1, 101):
