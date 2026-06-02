@@ -1,0 +1,7 @@
+
+
+
+https://www.python-spider.com/challenge/21 请求中 有加密参数 s ,
+请利用chrome-devtools_mcp 与 js-reverse-mcp的辅助，最终在node.js上模拟这个参数，并且可以顺利访问
+https://www.python-spider.com/api/challenge21  的第第一页，获取第一页的数字。 最终的结果我
+需要脱离浏览器，使用 python 加上 纯js  能够获取得到一百页的数的总和
