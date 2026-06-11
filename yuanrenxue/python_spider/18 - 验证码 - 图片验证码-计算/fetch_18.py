@@ -1,10 +1,8 @@
-import base64
 import random
 import time
 from pathlib import Path
 import requests
 from inferring import ImageModel
-
 
 headers = {
     "accept": "application/json, text/javascript, */*; q=0.01",
@@ -28,9 +26,8 @@ cookies = {
 }
 
 
-def total_number(page):
+def total_number(page, code_num):
     if page > 1:
-        code_num = challenge18_verify(verfy_)
         data = {
             'page': page,
             'code': str(code_num)
@@ -39,10 +36,8 @@ def total_number(page):
         data = {
             'page': page
         }
-    print(f'data => {data}')
     response = requests.post('https://www.python-spider.com/api/challenge18', headers=headers, cookies=cookies,
                              data=data).json()
-    print(f'response  ==>{response}')
     data = response["data"]
     page_num = 0
     num_list = []
@@ -51,7 +46,9 @@ def total_number(page):
         num_list.append(num)
         page_num += int(num)
     print(f'第 {page} 页的 数字总和为： {page_num} ===> {num_list}')
-    return page_num
+    code_num = challenge18_verify(verfy_)
+
+    return page_num, code_num
 
 
 def challenge18_verify(verfy_):
@@ -63,16 +60,10 @@ def challenge18_verify(verfy_):
     params = {
         params_key: ""
     }
-
-    response = requests.get(url, headers=headers, params=params)
-    print(response.status_code)
-    print(response.headers.get("Content-Type"))
-
+    response = requests.get(url, headers=headers, cookies=cookies, params=params)
     # 保存接口返回的图片二进制内容为 png 文件
     output_path = Path("verify.png")
     output_path.write_bytes(response.content)
-
-    print(f"图片已保存：{output_path.resolve()}")
     resp = verfy_.verfiy_png(output_path.resolve())
     print(f'运算结果： {resp}')
 
@@ -83,8 +74,17 @@ if __name__ == '__main__':
     verfy_ = ImageModel()
 
     all_num = 0
+    code_num = None
     for i in range(1, 101):
-        resp = total_number(page=i)
+        while True:
+            try:
+                resp, code_num = total_number(page=i, code_num=code_num)
+                break
+            except:
+                print(f'========= 报错重新计算验证码 ============')
+                code_num = challenge18_verify(verfy_)
+                time.sleep(1)
+
         all_num += resp
         time.sleep(1)
 
